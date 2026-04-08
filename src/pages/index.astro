@@ -3,8 +3,6 @@ import MainLayout from "@/layouts/MainLayout.astro";
 import { env } from "cloudflare:workers";
 
 const { results } = await env.DB.prepare("SELECT * FROM User").run();
-
-console.log(results);
 ---
 
 <MainLayout>

@@ -8,5 +8,16 @@ console.log(results);
 ---
 
 <MainLayout>
-  <h1>Astro</h1>
+  <h1>Astro + Cloudflare Workers D1</h1>
+
+  {
+    results.map((user) => (
+      <div class="flex gap-2">
+        <>
+          <p>{user.name}</p>
+          <p>({user.email})</p>
+        </>
+      </div>
+    ))
+  }
 </MainLayout>

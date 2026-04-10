@@ -1,6 +1,7 @@
 import { getActionContext } from "astro:actions";
 import { defineMiddleware, sequence } from "astro:middleware";
 import { env } from "cloudflare:workers";
+import { auth } from "./lib/auth";
 
 const rateLimit = defineMiddleware(async (context, next) => {
   const { success } = await env.RATE_LIMIT.limit({
@@ -14,4 +15,18 @@ const rateLimit = defineMiddleware(async (context, next) => {
   return next();
 });
 
-export const onRequest = sequence(rateLimit);
+const authMiddleware = defineMiddleware(async (context, next) => {
+  const isAuthed = await auth.api.getSession({
+    headers: context.request.headers,
+  });
+  if (isAuthed) {
+    context.locals.user = isAuthed.user;
+    context.locals.session = isAuthed.session;
+  } else {
+    context.locals.user = null;
+    context.locals.session = null;
+  }
+  return next();
+});
+
+export const onRequest = sequence(rateLimit, authMiddleware);

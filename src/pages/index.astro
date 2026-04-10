@@ -1,15 +1,16 @@
 ---
+import { db } from "@/db";
+import { user } from "@/db/schema";
 import MainLayout from "@/layouts/MainLayout.astro";
-import { env } from "cloudflare:workers";
 
-const { results } = await env.DB.prepare("SELECT * FROM User").run();
+const users = await db.select().from(user);
 ---
 
 <MainLayout>
   <h1>Astro + Cloudflare Workers D1</h1>
 
   {
-    results.map((user) => (
+    users.map((user) => (
       <div class="flex gap-2">
         <>
           <p>{user.name}</p>

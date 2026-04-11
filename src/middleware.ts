@@ -3,6 +3,8 @@ import { defineMiddleware, sequence } from "astro:middleware";
 import { env } from "cloudflare:workers";
 import { auth } from "./lib/auth";
 
+const privateRoutes = ["/"];
+
 const rateLimit = defineMiddleware(async (context, next) => {
   const { success } = await env.RATE_LIMIT.limit({
     key: context.url.pathname,
@@ -32,6 +34,10 @@ const authMiddleware = defineMiddleware(async (context, next) => {
   } else {
     context.locals.user = null;
     context.locals.session = null;
+  }
+
+  if (privateRoutes.includes(context.url.pathname) && !isAuthed) {
+    return context.redirect("/auth/login");
   }
 
   return next();

@@ -14,7 +14,7 @@ const LoginForm = () => {
     const { data, error } = await signIn.email({
       email: useForm.email,
       password: useForm.password,
-      callbackURL: "/dashboard",
+      callbackURL: "/",
     });
 
     console.log({ data, error });

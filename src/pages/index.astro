@@ -2,11 +2,13 @@
 import { db } from "@/db";
 import { user } from "@/db/schema";
 import MainLayout from "@/layouts/MainLayout.astro";
+import SignOut from "@/components/auth/SignOut";
 
 const users = await db.select().from(user);
 ---
 
 <MainLayout>
+  <SignOut client:load />
   <h1>Astro + Cloudflare Workers D1</h1>
 
   {

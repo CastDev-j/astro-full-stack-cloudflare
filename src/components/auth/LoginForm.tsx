@@ -1,67 +1,130 @@
 import { signIn } from "@/lib/auth-client";
-import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { authSchema } from "@/interfaces/auth";
+import { Button } from "../ui/Button";
+import { Input } from "../ui/Input";
+import { Checkbox } from "../ui/Checkbox";
+import { cn } from "@/lib/cn";
 
 const LoginForm = () => {
-  const [useForm, setUseForm] = useState({
-    email: "23031429@itcelaya.edu.mx",
-    password: "12345678",
-    rememberMe: false,
+  const {
+    register,
+    handleSubmit,
+    formState: {
+      errors,
+      isSubmitting,
+      isValid,
+      isDirty,
+      isSubmitSuccessful,
+      dirtyFields,
+    },
+  } = useForm({
+    resolver: zodResolver(authSchema.login),
+    mode: "onChange",
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const { data, error } = await signIn.email({
-      email: useForm.email,
-      password: useForm.password,
-      callbackURL: "/",
-    });
-
-    console.log({ data, error });
-  };
+  console.log({});
 
   return (
-    <div>
-      <h2>Login Form</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
+    <div className="flex flex-col items-center justify-center gap-4 max-w-xs w-full transition-all">
+      <h2 className="text-xl">Inicio de Sesión</h2>
+      <form
+        className="flex flex-col gap-4 w-full"
+        onSubmit={handleSubmit(async ({ email, password, rememberMe }) => {
+          try {
+            const { data } = await signIn.email({
+              email,
+              password,
+              rememberMe,
+              callbackURL: "/",
+            });
+
+            console.log({ data });
+          } catch (error) {
+            console.error("Error during sign-in:", error);
+          }
+        })}
+      >
+        <div className="text-sm flex flex-col gap-1">
+          <label htmlFor="email">Correo Electrónico:</label>
+          <Input
             id="email"
-            name="email"
-            value={useForm.email}
-            onChange={(e) => setUseForm({ ...useForm, email: e.target.value })}
+            placeholder="ejemplo@correo.com"
+            error={!!errors.email}
+            success={dirtyFields.email && !errors.email}
+            {...register("email", { required: true })}
           />
+          <p
+            className={cn(
+              "text-rose-500 text-sm transition-opacity",
+              errors.email ? "opacity-100" : "opacity-0",
+            )}
+          >
+            {errors.email?.message}
+          </p>
         </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
+        <div className="text-sm flex flex-col gap-1">
+          <label htmlFor="password">Contraseña:</label>
+          <Input
             id="password"
-            name="password"
-            value={useForm.password}
-            onChange={(e) =>
-              setUseForm({ ...useForm, password: e.target.value })
-            }
+            placeholder="Ingrese su contraseña"
+            type="password"
+            {...register("password", { required: true })}
+            error={!!errors.password}
+            success={dirtyFields.password && !errors.password}
           />
+          {errors.password && (
+            <p
+              className={cn(
+                "text-rose-500 text-sm transition-opacity",
+                errors.password ? "opacity-100" : "opacity-0",
+              )}
+            >
+              {errors.password.message}
+            </p>
+          )}
         </div>
-        <div>
-          <label htmlFor="rememberMe">Remember Me:</label>
-          <input
-            type="checkbox"
-            id="rememberMe"
-            name="rememberMe"
-            checked={useForm.rememberMe}
-            onChange={(e) =>
-              setUseForm({ ...useForm, rememberMe: e.target.checked })
-            }
-          />
+        <div className="text-sm flex items-center gap-2">
+          <Checkbox id="rememberMe" {...register("rememberMe")} />
+          <label htmlFor="rememberMe">Recuerdame</label>
+          {errors.rememberMe && (
+            <p
+              className={cn(
+                "text-rose-500 text-sm transition-opacity",
+                errors.rememberMe ? "opacity-100" : "opacity-0",
+              )}
+            >
+              {errors.rememberMe.message}
+            </p>
+          )}
         </div>
-        <button type="submit">Login</button>
+        <Button
+          type="submit"
+          disabled={isSubmitting || !isDirty || !isValid || isSubmitSuccessful}
+        >
+          {!isSubmitting && !isSubmitSuccessful && "Iniciar Sesión"}
+          {isSubmitting && !isSubmitSuccessful && "Iniciando sesión..."}
+          {isSubmitSuccessful && "Redireccionando..."}
+        </Button>
+
+        <p
+          className={cn(
+            "text-rose-500 text-sm transition-opacity",
+            errors.form ? "opacity-100 flex" : "opacity-0 hidden",
+          )}
+        >
+          {errors.form?.message}
+        </p>
       </form>
 
-      <a href="/auth/register"> Don't have an account? Register here. </a>
+      <a
+        href="/auth/register"
+        className="text-sm text-neutral-600 hover:underline"
+      >
+        {" "}
+        ¿No tienes una cuenta? Regístrate
+      </a>
     </div>
   );
 };

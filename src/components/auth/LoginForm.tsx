@@ -6,12 +6,12 @@ import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Checkbox } from "../ui/Checkbox";
 import { cn } from "@/lib/cn";
-import { navigate } from "astro:transitions/client";
 
 const LoginForm = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: {
       errors,
       isSubmitting,
@@ -20,9 +20,17 @@ const LoginForm = () => {
       isSubmitSuccessful,
       dirtyFields,
     },
+    setError,
+    clearErrors,
   } = useForm({
     resolver: zodResolver(authSchema.login),
     mode: "onChange",
+  });
+
+  watch(() => {
+    if (errors.form) {
+      clearErrors("form");
+    }
   });
 
   return (
@@ -31,17 +39,24 @@ const LoginForm = () => {
       <form
         className="flex flex-col gap-4 w-full"
         onSubmit={handleSubmit(async ({ email, password, rememberMe }) => {
-          const { data } = await signIn.email({
+          const { data: result } = await signIn.email({
             email,
             password,
             rememberMe,
             callbackURL: "/",
-            fetchOptions: {
-              onSuccess: (data) => {
-                if (data) navigate("/");
-              },
-            },
           });
+
+          if (
+            !(result as { success?: boolean })?.success &&
+            !result?.redirect
+          ) {
+            setError("form", {
+              type: "manual",
+              message:
+                (result as { message?: string })?.message ||
+                "Error desconocido",
+            });
+          }
         })}
       >
         <div className="text-sm flex flex-col gap-1">
@@ -108,7 +123,7 @@ const LoginForm = () => {
 
         <p
           className={cn(
-            "text-rose-500 text-sm transition-opacity",
+            "text-rose-500 text-sm transition-opacity flex justify-center text-center",
             errors.form ? "opacity-100 flex" : "opacity-0 hidden",
           )}
         >

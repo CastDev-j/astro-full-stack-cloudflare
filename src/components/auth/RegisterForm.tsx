@@ -11,6 +11,7 @@ const RegisterForm = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: {
       errors,
       isSubmitting,
@@ -19,9 +20,17 @@ const RegisterForm = () => {
       isSubmitSuccessful,
       dirtyFields,
     },
+    setError,
+    clearErrors,
   } = useForm({
     resolver: zodResolver(authSchema.register),
     mode: "onChange",
+  });
+
+  watch(() => {
+    if (errors.form) {
+      clearErrors("form");
+    }
   });
 
   return (
@@ -30,20 +39,25 @@ const RegisterForm = () => {
       <form
         className="flex flex-col gap-4 w-full"
         onSubmit={handleSubmit(async ({ name, email, password }) => {
-          try {
-            const { data } = await signUp.email({
-              name,
-              email,
-              password,
-              callbackURL: "/",
-              fetchOptions: {
-                onSuccess: (data) => {
-                  if (data) navigate("/");
-                },
+          const { data: result } = await signUp.email({
+            name,
+            email,
+            password,
+            callbackURL: "/",
+            fetchOptions: {
+              onSuccess: () => {
+                navigate("/");
               },
+            },
+          });
+
+          if (!(result as { success?: boolean })?.success && !result?.token) {
+            setError("form", {
+              type: "manual",
+              message:
+                (result as { message?: string })?.message ||
+                "Error al crear la cuenta",
             });
-          } catch (error) {
-            console.error("Error during sign-up:", error);
           }
         })}
       >
@@ -137,6 +151,15 @@ const RegisterForm = () => {
           {isSubmitting && !isSubmitSuccessful && "Creando cuenta..."}
           {isSubmitSuccessful && "Redireccionando..."}
         </Button>
+
+        <p
+          className={cn(
+            "text-rose-500 text-sm transition-opacity flex justify-center text-center",
+            errors.form ? "opacity-100 flex" : "opacity-0 hidden",
+          )}
+        >
+          {errors.form?.message}
+        </p>
       </form>
 
       <a

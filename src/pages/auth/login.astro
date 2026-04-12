@@ -4,5 +4,5 @@ import AuthLayout from "@/layouts/AuthLayout.astro";
 ---
 
 <AuthLayout title="Iniciar Sesión">
-  <LoginForm client:load />
+  <LoginForm client:only="react" />
 </AuthLayout>

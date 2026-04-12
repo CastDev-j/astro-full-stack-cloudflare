@@ -5,11 +5,19 @@ import MainLayout from "@/layouts/MainLayout.astro";
 import SignOut from "@/components/auth/SignOut";
 
 const users = await db.select().from(user);
+
+const session = Astro.locals.session;
+const profile = Astro.locals.user;
 ---
 
 <MainLayout>
   <SignOut client:load />
   <h1>Astro + Cloudflare Workers D1</h1>
+
+  <div class="flex flex-col gap-4 w-2xl">
+    <p>{JSON.stringify(session)}</p>
+    <p>{JSON.stringify(profile)}</p>
+  </div>
 
   {
     users.map((user) => (

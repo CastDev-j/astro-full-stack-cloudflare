@@ -4,6 +4,7 @@ import { env } from "cloudflare:workers";
 import { auth } from "./lib/auth";
 
 const privateRoutes = ["/"];
+const authRoutes = ["/auth/login", "/auth/register"];
 
 const rateLimit = defineMiddleware(async (context, next) => {
   const { success } = await env.RATE_LIMIT.limit({
@@ -38,6 +39,10 @@ const authMiddleware = defineMiddleware(async (context, next) => {
 
   if (privateRoutes.includes(context.url.pathname) && !isAuthed) {
     return context.redirect("/auth/login");
+  }
+
+  if (authRoutes.includes(context.url.pathname) && isAuthed) {
+    return context.redirect("/");
   }
 
   return next();

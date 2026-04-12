@@ -5,6 +5,7 @@ import { authSchema } from "@/interfaces/auth";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
 import { cn } from "@/lib/cn";
+import { navigate } from "astro:transitions/client";
 
 const RegisterForm = () => {
   const {
@@ -36,6 +37,8 @@ const RegisterForm = () => {
               password,
               callbackURL: "/",
             });
+
+            if (data) navigate("/");
           } catch (error) {
             console.error("Error during sign-up:", error);
           }

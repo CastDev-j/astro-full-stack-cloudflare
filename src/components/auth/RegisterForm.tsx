@@ -36,9 +36,12 @@ const RegisterForm = () => {
               email,
               password,
               callbackURL: "/",
+              fetchOptions: {
+                onSuccess: (data) => {
+                  if (data) navigate("/");
+                },
+              },
             });
-
-            if (data) navigate("/");
           } catch (error) {
             console.error("Error during sign-up:", error);
           }

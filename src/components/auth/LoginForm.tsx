@@ -6,6 +6,7 @@ import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Checkbox } from "../ui/Checkbox";
 import { cn } from "@/lib/cn";
+import { navigate } from "astro:transitions/client";
 
 const LoginForm = () => {
   const {
@@ -30,16 +31,17 @@ const LoginForm = () => {
       <form
         className="flex flex-col gap-4 w-full"
         onSubmit={handleSubmit(async ({ email, password, rememberMe }) => {
-          try {
-            const { data } = await signIn.email({
-              email,
-              password,
-              rememberMe,
-              callbackURL: "/",
-            });
-          } catch (error) {
-            console.error("Error during sign-in:", error);
-          }
+          const { data } = await signIn.email({
+            email,
+            password,
+            rememberMe,
+            callbackURL: "/",
+            fetchOptions: {
+              onSuccess: (data) => {
+                if (data) navigate("/");
+              },
+            },
+          });
         })}
       >
         <div className="text-sm flex flex-col gap-1">

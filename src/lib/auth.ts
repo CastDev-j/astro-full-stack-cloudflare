@@ -69,7 +69,6 @@ async function verifyPassword(data: {
   );
 
   const newHash = new Uint8Array(hashBuffer);
-  // Comparación en tiempo constante para evitar timing attacks
   return newHash.every((byte, i) => byte === storedHash[i]);
 }
 

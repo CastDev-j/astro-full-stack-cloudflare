@@ -1,66 +1,144 @@
-import { signIn, signUp } from "@/lib/auth-client";
-import React, { useState } from "react";
+import { signUp } from "@/lib/auth-client";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { authSchema } from "@/interfaces/auth";
+import { Input } from "../ui/Input";
+import { Button } from "../ui/Button";
+import { cn } from "@/lib/cn";
 
 const RegisterForm = () => {
-  const [useForm, setUseForm] = useState({
-    email: "23031429@itcelaya.edu.mx",
-    password: "12345678",
-    name: "John Doe",
+  const {
+    register,
+    handleSubmit,
+    formState: {
+      errors,
+      isSubmitting,
+      isValid,
+      isDirty,
+      isSubmitSuccessful,
+      dirtyFields,
+    },
+  } = useForm({
+    resolver: zodResolver(authSchema.register),
+    mode: "onChange",
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const { data, error } = await signUp.email({
-      email: useForm.email,
-      password: useForm.password,
-      name: useForm.name,
-      callbackURL: "/",
-    });
-
-    console.log({ data, error });
-  };
-
   return (
-    <div>
-      <h2>Register Form</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={useForm.email}
-            onChange={(e) => setUseForm({ ...useForm, email: e.target.value })}
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={useForm.password}
-            onChange={(e) =>
-              setUseForm({ ...useForm, password: e.target.value })
-            }
-          />
-        </div>
-        <div>
-          <label htmlFor="name">Name:</label>
-          <input
-            type="text"
+    <div className="flex flex-col items-center justify-center gap-4 max-w-xs w-full transition-all">
+      <h2 className="text-xl">Crear Cuenta</h2>
+      <form
+        className="flex flex-col gap-4 w-full"
+        onSubmit={handleSubmit(async ({ name, email, password }) => {
+          try {
+            const { data } = await signUp.email({
+              name,
+              email,
+              password,
+              callbackURL: "/",
+            });
+          } catch (error) {
+            console.error("Error during sign-up:", error);
+          }
+        })}
+      >
+        <div className="text-sm flex flex-col gap-1">
+          <label htmlFor="name">Nombre:</label>
+          <Input
             id="name"
-            name="name"
-            value={useForm.name}
-            onChange={(e) => setUseForm({ ...useForm, name: e.target.value })}
+            placeholder="Tu nombre"
+            error={!!errors.name}
+            success={dirtyFields.name && !errors.name}
+            {...register("name", { required: true })}
           />
+          <p
+            className={cn(
+              "text-rose-500 text-sm transition-opacity",
+              errors.name ? "opacity-100" : "opacity-0",
+            )}
+          >
+            {errors.name?.message}
+          </p>
         </div>
-        <button type="submit">Register</button>
+
+        <div className="text-sm flex flex-col gap-1">
+          <label htmlFor="email">Correo Electrónico:</label>
+          <Input
+            id="email"
+            placeholder="ejemplo@correo.com"
+            error={!!errors.email}
+            success={dirtyFields.email && !errors.email}
+            {...register("email", { required: true })}
+          />
+          <p
+            className={cn(
+              "text-rose-500 text-sm transition-opacity",
+              errors.email ? "opacity-100" : "opacity-0",
+            )}
+          >
+            {errors.email?.message}
+          </p>
+        </div>
+
+        <div className="text-sm flex flex-col gap-1">
+          <label htmlFor="password">Contraseña:</label>
+          <Input
+            id="password"
+            placeholder="Crea una contraseña"
+            type="password"
+            error={!!errors.password}
+            success={dirtyFields.password && !errors.password}
+            {...register("password", { required: true })}
+          />
+          <p
+            className={cn(
+              "text-rose-500 text-sm transition-opacity",
+              errors.password ? "opacity-100" : "opacity-0",
+            )}
+          >
+            {errors.password?.message}
+          </p>
+        </div>
+
+        <div className="text-sm flex flex-col gap-1">
+          <label htmlFor="confirmPassword">Confirmar contraseña:</label>
+          <Input
+            id="confirmPassword"
+            placeholder="Repite tu contraseña"
+            type="password"
+            error={!!errors.confirmPassword}
+            success={
+              dirtyFields.confirmPassword &&
+              !errors.confirmPassword &&
+              !!dirtyFields.password
+            }
+            {...register("confirmPassword", { required: true })}
+          />
+          <p
+            className={cn(
+              "text-rose-500 text-sm transition-opacity",
+              errors.confirmPassword ? "opacity-100" : "opacity-0",
+            )}
+          >
+            {errors.confirmPassword?.message}
+          </p>
+        </div>
+
+        <Button
+          type="submit"
+          disabled={isSubmitting || !isDirty || !isValid || isSubmitSuccessful}
+        >
+          {!isSubmitting && !isSubmitSuccessful && "Crear Cuenta"}
+          {isSubmitting && !isSubmitSuccessful && "Creando cuenta..."}
+          {isSubmitSuccessful && "Redireccionando..."}
+        </Button>
       </form>
 
-      <a href="/auth/login"> Already have an account? Login here. </a>
+      <a
+        href="/auth/login"
+        className="text-sm text-neutral-600 hover:underline"
+      >
+        ¿Ya tienes una cuenta? Inicia sesión
+      </a>
     </div>
   );
 };

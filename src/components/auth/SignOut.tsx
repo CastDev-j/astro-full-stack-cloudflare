@@ -15,7 +15,6 @@ const SignOut = () => {
       },
     });
 
-    console.log({ data, error });
     setisLoading(false);
   };
 

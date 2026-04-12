@@ -24,8 +24,6 @@ const LoginForm = () => {
     mode: "onChange",
   });
 
-  console.log({});
-
   return (
     <div className="flex flex-col items-center justify-center gap-4 max-w-xs w-full transition-all">
       <h2 className="text-xl">Inicio de Sesión</h2>
@@ -39,8 +37,6 @@ const LoginForm = () => {
               rememberMe,
               callbackURL: "/",
             });
-
-            console.log({ data });
           } catch (error) {
             console.error("Error during sign-in:", error);
           }

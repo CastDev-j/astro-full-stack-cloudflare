@@ -12,8 +12,6 @@ const errorDictionary: Record<number, string> = {
 export const ALL = (async (ctx) => {
   const response = await auth.handler(ctx.request);
 
-  console.log(response);
-
   if (response.status === 302 && response.statusText === "FOUND") {
     return response;
   }

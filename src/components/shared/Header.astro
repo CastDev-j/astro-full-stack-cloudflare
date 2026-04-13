@@ -1,0 +1,43 @@
+---
+import SignOut from "../auth/SignOut";
+
+const { email, name, image } = Astro.locals.user!;
+
+const getInitials = (name: string) => {
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+};
+---
+
+<header class="border-b border-neutral-200 px-6 py-4">
+  <div class="mx-auto flex max-w-6xl items-center justify-between">
+    <div class="flex items-center gap-3">
+      {
+        image ? (
+          <img
+            src={image}
+            alt={name}
+            class="size-8 rounded-full object-cover"
+            referrerpolicy="no-referrer"
+          />
+        ) : (
+          <div class="flex size-8 items-center justify-center rounded-full bg-neutral-200 text-sm font-medium text-neutral-700">
+            {getInitials(name)}
+          </div>
+        )
+      }
+      <div class="text-sm">
+        <p class="font-medium text-neutral-900">{name}</p>
+        <p class="text-neutral-500">{email}</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <SignOut client:load />
+    </div>
+  </div>
+</header>

@@ -1,32 +1,11 @@
 ---
-import { db } from "@/db";
-import { user } from "@/db/schema";
-import MainLayout from "@/layouts/MainLayout.astro";
-import SignOut from "@/components/auth/SignOut";
-
-const users = await db.select().from(user);
-
-const session = Astro.locals.session;
-const profile = Astro.locals.user;
+import UserList from "@/components/users/UserList.astro";
+import UserListFallBack from "@/components/users/UserListFallBack.astro";
+import DashboardLayout from "@/layouts/DashboardLayout.astro";
 ---
 
-<MainLayout>
-  <SignOut client:load />
-  <h1>Astro + Cloudflare Workers D1</h1>
-
-  <div class="flex flex-col gap-4 w-2xl">
-    <p>{JSON.stringify(session)}</p>
-    <p>{JSON.stringify(profile)}</p>
-  </div>
-
-  {
-    users.map((user) => (
-      <div class="flex gap-2">
-        <>
-          <p>{user.name}</p>
-          <p>({user.email})</p>
-        </>
-      </div>
-    ))
-  }
-</MainLayout>
+<DashboardLayout>
+  <UserList server:defer>
+    <UserListFallBack slot="fallback" />
+  </UserList>
+</DashboardLayout>

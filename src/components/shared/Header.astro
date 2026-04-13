@@ -13,30 +13,32 @@ const getInitials = (name: string) => {
 };
 ---
 
-<header class="border-b border-neutral-200 px-6 py-4">
-  <div class="mx-auto flex max-w-6xl items-center justify-between">
-    <div class="flex items-center gap-3">
+<header class="border-b border-neutral-200 px-4 py-4 sm:px-6">
+  <div
+    class="mx-auto flex max-w-6xl items-center justify-between gap-3 sm:gap-4"
+  >
+    <div class="flex min-w-0 flex-1 items-center gap-3">
       {
         image ? (
           <img
             src={image}
             alt={name}
-            class="size-8 rounded-full object-cover"
+            class="size-8 shrink-0 rounded-full object-cover"
             referrerpolicy="no-referrer"
           />
         ) : (
-          <div class="flex size-8 items-center justify-center rounded-full bg-neutral-200 text-sm font-medium text-neutral-700">
+          <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-neutral-200 text-sm font-medium text-neutral-700">
             {getInitials(name)}
           </div>
         )
       }
-      <div class="text-sm">
-        <p class="font-medium text-neutral-900">{name}</p>
-        <p class="text-neutral-500">{email}</p>
+      <div class="min-w-0 text-sm">
+        <p class="truncate font-medium text-neutral-900">{name}</p>
+        <p class="truncate text-neutral-500">{email}</p>
       </div>
     </div>
 
-    <div class="flex items-center gap-4">
+    <div class="shrink-0">
       <SignOut client:load />
     </div>
   </div>

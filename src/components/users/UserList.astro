@@ -17,40 +17,40 @@ const getInitials = (name: string) => {
 
 <div class="flex flex-col gap-6">
   <div class="rounded-lg border border-neutral-200 bg-white">
-    <div class="border-b border-neutral-200 px-6 py-4">
-      <h3 class="text-lg font-semibold text-neutral-900">
+    <div class="border-b border-neutral-200 px-4 py-4 sm:px-6">
+      <h3 class="text-base font-semibold text-neutral-900 sm:text-lg">
         Usuarios Registrados ({users.length})
       </h3>
     </div>
     <div class="divide-y divide-neutral-200">
       {
         users.map((user) => (
-          <div class="flex items-center gap-4 px-6 py-4">
+          <div class="flex flex-wrap items-center gap-3 px-4 py-4 sm:flex-nowrap sm:gap-4 sm:px-6">
             {user.image ? (
               <img
                 src={user.image}
                 alt={user.name}
-                class="size-10 rounded-full object-cover"
+                class="size-9 shrink-0 rounded-full object-cover sm:size-10"
                 referrerpolicy="no-referrer"
               />
             ) : (
-              <div class="flex size-10 items-center justify-center rounded-full bg-neutral-100 text-sm font-medium text-neutral-600">
+              <div class="flex size-9 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-xs font-medium text-neutral-600 sm:size-10 sm:text-sm">
                 {getInitials(user.name)}
               </div>
             )}
 
-            <div class="flex-1">
-              <p class="font-medium text-neutral-900">{user.name}</p>
-              <p class="text-sm text-neutral-500">{user.email}</p>
+            <div class="min-w-0 flex-1">
+              <p class="truncate font-medium text-neutral-900">{user.name}</p>
+              <p class="truncate text-sm text-neutral-500">{user.email}</p>
             </div>
 
-            <div class="text-xs">
+            <div class="flex w-full justify-end text-xs sm:w-auto">
               {user.emailVerified ? (
-                <span class="rounded-full bg-green-100 px-2 py-1 text-green-700">
+                <span class="inline-flex rounded-full bg-green-100 px-2 py-1 text-green-700">
                   Verificado
                 </span>
               ) : (
-                <span class="rounded-full bg-neutral-100 px-2 py-1 text-neutral-600">
+                <span class="inline-flex rounded-full bg-neutral-100 px-2 py-1 text-neutral-600">
                   Pendiente
                 </span>
               )}

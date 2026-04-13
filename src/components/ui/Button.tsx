@@ -1,7 +1,7 @@
 import { cn } from "@/lib/cn";
 import type { ButtonHTMLAttributes } from "react";
 
-type ButtonVariant = "default" | "danger" | "ghost";
+type ButtonVariant = "default" | "danger" | "ghost" | "outline";
 type ButtonSize = "default" | "sm" | "lg" | "icon";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -33,6 +33,8 @@ const Button = ({
     danger: "bg-rose-600 text-white hover:bg-rose-700 active:bg-rose-800",
 
     ghost: "hover:bg-neutral-100 hover:text-neutral-900 active:bg-neutral-200",
+    outline:
+      "border border-neutral-300 text-neutral-900 hover:bg-neutral-100 active:bg-neutral-200",
   }[variant];
 
   return (

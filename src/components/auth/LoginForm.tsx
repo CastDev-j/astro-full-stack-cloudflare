@@ -6,6 +6,7 @@ import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Checkbox } from "../ui/Checkbox";
 import { cn } from "@/lib/cn";
+import { FaGoogle } from "react-icons/fa";
 
 const LoginForm = () => {
   const {
@@ -32,6 +33,22 @@ const LoginForm = () => {
       clearErrors("form");
     }
   });
+
+  const handleGoogleSignIn = async () => {
+    const { data: result } = await signIn.social({
+      provider: "google",
+      callbackURL: "/",
+    });
+
+    if (!(result as { success?: boolean })?.success && !result?.redirect) {
+      setError("form", {
+        type: "manual",
+        message:
+          (result as { message?: string })?.message ||
+          "Error desconocido al iniciar sesión con Google",
+      });
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center gap-4 max-w-xs w-full transition-all">
@@ -119,6 +136,14 @@ const LoginForm = () => {
           {!isSubmitting && !isSubmitSuccessful && "Iniciar Sesión"}
           {isSubmitting && !isSubmitSuccessful && "Iniciando sesión..."}
           {isSubmitSuccessful && "Redireccionando..."}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleGoogleSignIn}
+          disabled={isSubmitting || isSubmitSuccessful}
+        >
+          <FaGoogle /> <span>Iniciar sesión con Google</span>
         </Button>
 
         <p

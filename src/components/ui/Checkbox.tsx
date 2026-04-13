@@ -1,6 +1,6 @@
 import { cn } from "@/lib/cn";
 import { forwardRef, type InputHTMLAttributes } from "react";
-import { CheckIcon } from "lucide-react";
+import { FiCheck } from "react-icons/fi";
 
 interface CheckboxProps extends Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -29,7 +29,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           )}
           {...props}
         />
-        <CheckIcon
+        <FiCheck
           aria-hidden="true"
           className="pointer-events-none size-3 text-white opacity-0 transition-opacity peer-checked:opacity-100 z-10"
         />

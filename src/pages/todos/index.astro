@@ -1,24 +1,13 @@
 ---
-import { db } from "@/db";
-import { todo } from "@/db/schema";
+import TodoList from "@/components/todo/TodoList.astro";
+import TodoListFallback from "@/components/todo/TodoListFallback.astro";
 import DashboardLayout from "@/layouts/DashboardLayout.astro";
-import { eq } from "drizzle-orm";
-
-const { id } = Astro.locals.user!;
-
-const todos = await db.select().from(todo).where(eq(todo.userId, id));
 ---
 
-<DashboardLayout>
+<DashboardLayout title="Pendientes">
   <h1 class="text-2xl font-bold">Pendientes</h1>
 
-  <ul class="mt-4 flex flex-col gap-2">
-    {
-      todos.map((todo) => (
-        <li class="rounded-md border border-neutral-200 bg-white px-4 py-2">
-          {todo.title}
-        </li>
-      ))
-    }
-  </ul>
+  <TodoList server:defer>
+    <TodoListFallback slot="fallback" />
+  </TodoList>
 </DashboardLayout>

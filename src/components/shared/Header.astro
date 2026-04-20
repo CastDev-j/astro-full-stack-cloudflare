@@ -1,5 +1,8 @@
 ---
+import { FaBars } from "react-icons/fa";
 import SignOut from "../auth/SignOut";
+import { Button } from "../ui/Button";
+import { cn } from "@/lib/cn";
 
 const { email, name, image } = Astro.locals.user!;
 
@@ -11,35 +14,110 @@ const getInitials = (name: string) => {
     .toUpperCase()
     .slice(0, 2);
 };
+
+const routes = [
+  { name: "Usuarios", href: "/" },
+  { name: "Tareas", href: "/todos" },
+];
+
+const currentPath = Astro.url.pathname;
 ---
 
-<header class="border-b border-neutral-200 px-4 py-4 sm:px-6">
-  <div
-    class="mx-auto flex max-w-6xl items-center justify-between gap-3 sm:gap-4"
-  >
-    <div class="flex min-w-0 flex-1 items-center gap-3">
+<header class="border-b border-neutral-200 bg-white px-4 py-3 sm:px-6">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4">
+    <div class="">
+      <SignOut client:load />
+    </div>
+
+    <div class="flex min-w-0 items-center gap-3">
       {
         image ? (
           <img
             src={image}
             alt={name}
-            class="size-8 shrink-0 rounded-full object-cover"
+            class="size-8 shrink-0 rounded-full object-cover ring-2 ring-neutral-100"
             referrerpolicy="no-referrer"
           />
         ) : (
-          <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-neutral-200 text-sm font-medium text-neutral-700">
+          <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-neutral-200 text-sm font-semibold text-neutral-700">
             {getInitials(name)}
           </div>
         )
       }
-      <div class="min-w-0 text-sm">
+      <div class="min-w-0 text-sm block">
         <p class="truncate font-medium text-neutral-900">{name}</p>
         <p class="truncate text-neutral-500">{email}</p>
       </div>
     </div>
 
-    <div class="shrink-0">
-      <SignOut client:load />
+    <nav class="hidden md:flex">
+      <ul class="flex items-end gap-1">
+        {
+          routes.map((route) => {
+            const isActive = currentPath === route.href;
+            return (
+              <li>
+                <a
+                  href={route.href}
+                  class={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors decoration-2 underline-offset-4 ${
+                    isActive ? "underline" : "text-neutral-600 hover:underline "
+                  }`}
+                >
+                  {route.name}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2 sm:gap-3 md:hidden">
+      <Button size="icon" variant="ghost" className="menu-toggle">
+        <FaBars />
+      </Button>
     </div>
   </div>
 </header>
+
+<aside class="-translate-x-full transition-transform relative z-50 md:hidden">
+  <nav
+    class="flex md:hidden w-full h-[90dvh] flex-col gap-4 border-r border-neutral-200 bg-white p-4 absolute"
+  >
+    <ul class="flex flex-col items-center gap-2 w-full">
+      {
+        routes.map((route) => {
+          const isActive = currentPath === route.href;
+          return (
+            <li>
+              <a
+                href={route.href}
+                class={cn(
+                  "text-xl font-medium transition-colors ",
+                  isActive ? "text-neutral-800" : "text-neutral-600",
+                )}
+              >
+                {route.name}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </nav>
+</aside>
+
+<script>
+  const loadMenuToggle = () => {
+    const toggle = document.querySelector(".menu-toggle");
+    const aside = document.querySelector("aside");
+
+    if (!toggle || !aside) return;
+
+    toggle.addEventListener("click", () => {
+      aside.classList.toggle("-translate-x-full");
+    });
+  };
+
+  document.addEventListener("astro:page-load", loadMenuToggle);
+</script>

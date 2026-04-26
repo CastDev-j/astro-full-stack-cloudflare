@@ -3,7 +3,7 @@ import { defineMiddleware, sequence } from "astro:middleware";
 import { env } from "cloudflare:workers";
 import { auth } from "./lib/auth";
 
-const privateRoutes = ["/"];
+const privateRoutes = ["/", "/todos"];
 const authRoutes = ["/auth/login", "/auth/register"];
 
 const rateLimit = defineMiddleware(async (context, next) => {
@@ -21,20 +21,20 @@ const rateLimit = defineMiddleware(async (context, next) => {
 const authMiddleware = defineMiddleware(async (context, next) => {
   const { action } = getActionContext(context);
 
-  if (action) {
-    return next();
-  }
-
   const isAuthed = await auth.api.getSession({
     headers: context.request.headers,
   });
 
   if (isAuthed) {
     context.locals.user = isAuthed.user;
-    context.locals.session = isAuthed.session;
+    context.locals.session = isAuthed.session;    
   } else {
     context.locals.user = null;
     context.locals.session = null;
+  }
+
+  if (action) {
+    return next();
   }
 
   if (privateRoutes.includes(context.url.pathname) && !isAuthed) {

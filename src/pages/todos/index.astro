@@ -2,12 +2,14 @@
 import TodoList from "@/components/todo/TodoList.astro";
 import TodoListFallback from "@/components/todo/TodoListFallback.astro";
 import DashboardLayout from "@/layouts/DashboardLayout.astro";
+
+const currentPage = +(Astro.url.searchParams.get("page") || "1");
 ---
 
 <DashboardLayout title="Pendientes">
   <h1 class="text-2xl font-bold">Pendientes</h1>
 
-  <TodoList server:defer>
+  <TodoList server:defer page={currentPage}>
     <TodoListFallback slot="fallback" />
   </TodoList>
 </DashboardLayout>

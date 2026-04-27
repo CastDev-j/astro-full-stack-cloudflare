@@ -40,14 +40,14 @@ export default function TodoListComponent({
 
     if (!data?.success || !data.data) return;
 
+    if (page !== 1) {
+      await navigate("?page=1");
+    }
+
     const created = data.data as Todo;
     setTodos((prev) => [created, ...prev].splice(0, 5));
     setTotal((prev) => prev + 1);
     setInput("");
-
-    if (page !== 1) {
-      await navigate("?page=1");
-    }
   }
 
   async function handleDelete(id: string) {

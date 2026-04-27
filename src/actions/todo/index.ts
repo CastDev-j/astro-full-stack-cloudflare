@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { todo as todoSchema } from "@/db/schema";
-import { and, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq } from "drizzle-orm";
 import { defineAction } from "astro:actions";
 import { z } from "zod";
 
@@ -20,11 +20,12 @@ export const todo = {
         db
           .select()
           .from(todoSchema)
-          .where(eq(todoSchema.userId, id)).orderBy(desc(todoSchema.updatedAt))
+          .where(eq(todoSchema.userId, id))
+          .orderBy(desc(todoSchema.updatedAt))
           .limit(offset)
           .offset((page - 1) * offset),
         db
-          .select({ id: todoSchema.id })
+          .select({ total: count() })
           .from(todoSchema)
           .where(eq(todoSchema.userId, id)),
       ]);
@@ -32,7 +33,7 @@ export const todo = {
       return {
         success: true,
         data: todos,
-        totalCount: allTodos.length,
+        totalCount: allTodos[0]?.total ?? 0,
       };
     },
   }),

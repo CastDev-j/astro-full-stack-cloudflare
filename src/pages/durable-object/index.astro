@@ -1,0 +1,15 @@
+---
+import DashboardLayout from "@/layouts/DashboardLayout.astro";
+import { env } from "cloudflare:workers";
+
+const counterId = env.COUNTER.idFromName("mi-contador");
+const counter = env.COUNTER.get(counterId);
+
+const initialValue = await counter.get();
+---
+
+<DashboardLayout title="Durable Object">
+  <h1 class="text-2xl font-bold">Prueba de Durable Object</h1>
+
+  {JSON.stringify({ initialValue })}
+</DashboardLayout>

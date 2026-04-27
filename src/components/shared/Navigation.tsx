@@ -9,6 +9,7 @@ import { cn } from "@/lib/cn";
 const navigationItems = [
   { name: "Inicio", href: "/" },
   { name: "Pendientes", href: "/todos" },
+  { name: "Durable Object", href: "/durable-object"}
 ];
 
 interface Props {

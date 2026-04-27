@@ -3,7 +3,7 @@ import { defineMiddleware, sequence } from "astro:middleware";
 import { env } from "cloudflare:workers";
 import { auth } from "./lib/auth";
 
-const privateRoutes = ["/", "/todos"];
+const privateRoutes = ["/", "/todos", "/durable-object"];
 const authRoutes = ["/auth/login", "/auth/register"];
 
 const rateLimit = defineMiddleware(async (context, next) => {

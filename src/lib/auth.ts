@@ -92,4 +92,11 @@ export const auth = betterAuth({
       prompt: "select_account consent",
     },
   },
+
+  advanced: {
+    ipAddress: {
+      ipAddressHeaders: ["cf-connecting-ip"],
+      disableIpTracking: false,
+    },
+  },
 });
